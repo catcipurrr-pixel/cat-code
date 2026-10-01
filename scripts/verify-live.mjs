@@ -1,5 +1,5 @@
 // Usage: node scripts/verify-live.mjs <url> [screenshot.png]
-// Loads the page in headless Chrome and checks matrix canvas, logo, vault balance, countdown, CA copy.
+// Loads the page in headless Chrome and checks matrix canvas, logo, vault panel, countdown, CA copy, and that /admin/ 404s.
 import { chromium } from "playwright";
 const [, , url = "http://localhost:3200/cat-code/", shot] = process.argv;
 const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH ?? "/usr/bin/google-chrome", args: ["--no-sandbox"] });
@@ -11,7 +11,7 @@ const rpcHosts = new Set();
 page.on("request", (r) => r.method() === "POST" && rpcHosts.add(new URL(r.url()).host));
 await page.goto(url, { waitUntil: "networkidle" });
 const vault = page.locator(".stat .big-value").first();
-await page.waitForFunction(() => /\d+\.\d{4} SOL/.test(document.querySelector(".stat .big-value")?.textContent ?? ""), null, { timeout: 30000 }).catch(() => {});
+await page.waitForFunction(() => !/SYNCING/.test(document.querySelector(".stat .big-value")?.textContent ?? "SYNCING"), null, { timeout: 30000 }).catch(() => {});
 const r = {
   vault: await vault.textContent(),
   vaultSub: await page.locator(".stat .panel-sub").first().textContent(),
@@ -31,9 +31,8 @@ r.clipboard = await page.evaluate(() => navigator.clipboard.readText()).catch((e
 r.rpcHosts = [...rpcHosts];
 r.consoleErrors = errors;
 if (shot) { await page.waitForTimeout(1500); await page.screenshot({ path: shot }); r.screenshot = shot; }
+r.adminLinks = await page.locator('a[href*="admin"]').count();
 const adm = await ctx.newPage();
-await adm.goto(new URL("admin/", url).href, { waitUntil: "networkidle" });
-await adm.waitForTimeout(4000);
-r.admin = await adm.locator(".kv").evaluateAll((els) => els.slice(0, 6).map((e) => e.textContent.replace(/\s+/g, " ").trim()));
+r.adminStatus = (await adm.goto(new URL("admin/", url).href))?.status();
 console.log(JSON.stringify(r, null, 2));
 await browser.close();

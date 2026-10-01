@@ -40,7 +40,6 @@ The public `api.mainnet-beta.solana.com` endpoint returns 403 to browser origins
   2. Reveal: available once `min_reveal_delay_slots` have passed.
   3. Finalize: a permissionless button that appears after the earliest-commit-wins window closes.
 * **Past rounds:** the answer and salt are shown only after the program records them on-chain (first valid reveal, or `publish_answer`), or from `public/rounds.json`. Each one can be checked against the round's fingerprint.
-* **/admin:** read-only status only: config, owner/operator, paused, params, round, balances. It has no forms and never handles answers, salts or keys.
 
 ## Cipher publishing
 The cipher is **not** in the bundle. At unlock time, upload `round-<id>.json` (`{ "title", "cipher", "hint" }`) to the URL in `NEXT_PUBLIC_CIPHER_URL_TEMPLATE`. The default is `public/puzzles/`, which requires a redeploy at unlock. An external bucket or CMS avoids that. Never deploy a cipher file early, and never put the answer in it.

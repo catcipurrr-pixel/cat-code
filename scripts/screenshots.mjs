@@ -10,8 +10,6 @@ const shots = [
   { name: "desktop-1280-full", path: "/", viewport: { width: 1280, height: 800 }, full: true },
   { name: "mobile-390", path: "/", viewport: { width: 390, height: 844 }, full: false, mobile: true },
   { name: "mobile-390-full", path: "/", viewport: { width: 390, height: 844 }, full: true, mobile: true },
-  { name: "admin-desktop-1280", path: "/admin", viewport: { width: 1280, height: 800 }, full: true },
-  { name: "admin-mobile-390", path: "/admin", viewport: { width: 390, height: 844 }, full: true, mobile: true },
 ];
 for (const s of shots) {
   const ctx = await browser.newContext({ viewport: s.viewport, deviceScaleFactor: s.mobile ? 2 : 1, isMobile: !!s.mobile, hasTouch: !!s.mobile });

@@ -88,6 +88,10 @@ export const RPC_LIST: string[] = rpcEnvList.length ? rpcEnvList : PUBLIC_RPC_FA
  */
 let goodIdx = 0;
 export const fallbackFetch: typeof fetch = async (_url, init) => {
+  // web3.js adds a "solana-client" header that some public RPCs don't allow in CORS preflight; drop it.
+  const headers = new Headers(init?.headers);
+  headers.delete("solana-client");
+  init = { ...init, headers };
   let lastErr: unknown;
   for (let k = 0; k < RPC_LIST.length; k++) {
     const i = (goodIdx + k) % RPC_LIST.length;

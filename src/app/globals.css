@@ -137,10 +137,6 @@ a:hover { text-shadow: var(--text-glow); }
 .rounds th, .rounds td { text-align: left; padding: 8px 10px; border-bottom: 1px solid rgba(57,255,20,0.2); }
 .rounds th { color: var(--green-dim); font-weight: 400; letter-spacing: 0.1em; }
 
-/* ---------- admin ---------- */
-.kv { display: flex; gap: 16px; padding: 6px 0; border-bottom: 1px dotted rgba(57,255,20,0.2); font-size: 14px; }
-.kv .k { flex: 0 0 210px; color: var(--green-dim); letter-spacing: 0.06em; }
-.kv .v { flex: 1; min-width: 0; word-break: break-all; color: var(--green-soft); }
 
 /* ---------- footer ---------- */
 .footer {
@@ -167,14 +163,11 @@ a:hover { text-shadow: var(--text-glow); }
   .actions { width: 100%; }
   .actions .wallet-adapter-dropdown { flex: 1; }
   .wallet-adapter-button-trigger, .actions .wallet-adapter-button { width: 100%; justify-content: center; height: 46px; }
-  .actions .btn-outline { height: 46px; }
   .panel { padding: 18px 16px; margin-bottom: 18px; }
   .grid-2 > .panel, .info .panel { margin-bottom: 18px; }
   .big-value { font-size: 30px; }
   .countdown { font-size: 34px; letter-spacing: 0.12em; }
   .copy-line .addr { flex-basis: 100%; }
-  .kv { flex-direction: column; gap: 2px; }
-  .kv .k { flex: none; }
 }
 @media (max-width: 380px) {
   .title { font-size: 26px; }
