@@ -1,0 +1,4 @@
+{
+  "_comment": "Optional off-chain supplement for CLOSED rounds only (the site already reads answers the program recorded on-chain). Add an entry after a round is solved/cancelled: {\"id\":0,\"answer\":\"...\",\"saltHex\":\"<64 hex>\",\"solver\":\"<pubkey>\",\"payoutSol\":1.23,\"date\":\"2026-10-01\",\"tx\":\"<sig>\"}. Never add the current round.",
+  "rounds": []
+}
