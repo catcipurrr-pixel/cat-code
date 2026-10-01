@@ -55,7 +55,6 @@ export function TokenInfo() {
     <section className="panel">
       <h2 className="panel-title">// TOKEN_INFO</h2>
       <CopyRow label="CA" value={CONFIG.token.ca} href={CONFIG.token.pumpUrl} />
-      <CopyRow label="FEE_WALLET" value={CONFIG.feeWallet} href={explorerUrl("address", CONFIG.feeWallet, "mainnet-beta")} />
       <a className="btn-neon pump" href={CONFIG.token.pumpUrl} target="_blank" rel="noreferrer">BUY ON PUMP.FUN ↗</a>
     </section>
   );

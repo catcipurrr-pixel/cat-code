@@ -47,8 +47,6 @@ export const CONFIG = {
   cluster: env(process.env.NEXT_PUBLIC_CLUSTER, "mainnet-beta"),
   /** Program ID. Defaults to the IDL address (keep in sync after `anchor keys sync` + deploy). */
   programId: env(process.env.NEXT_PUBLIC_PROGRAM_ID, (idl as { address: string }).address),
-  /** RPC for the fallback fee-wallet balance (fee wallet lives on mainnet). */
-  fallbackRpcUrl: env(process.env.NEXT_PUBLIC_FALLBACK_RPC_URL, "/api/rpc/fallback"),
   /** Countdown target (ms since epoch) used while no on-chain round exists. */
   fallbackCountdownTargetMs: parseTarget(
     env(process.env.NEXT_PUBLIC_FALLBACK_COUNTDOWN_TARGET, COUNTDOWN_TARGET),
@@ -64,7 +62,6 @@ export const CONFIG = {
     ca: "CbfSdYr4qc4YyzF3E22kiSAhoQfN61AvVkit82tKpump",
     pumpUrl: "https://pump.fun/coin/CbfSdYr4qc4YyzF3E22kiSAhoQfN61AvVkit82tKpump",
   },
-  feeWallet: "9fi4hHG1P1oENdq1JpyckmGnuyMfyp1k7hpAyjD1g4BP",
   split: { solver: 70, holders: 20, nextRound: 10 },
 } as const;
 
@@ -104,10 +101,21 @@ export const fallbackFetch: typeof fetch = async (_url, init) => {
 };
 
 /** Connection settings: proxy/direct URL in server mode, public RPC list with failover in static mode. */
-export function connectionArgs(kind: "main" | "fallback"): { endpoint: string; fetch?: typeof fetch } {
+export function connectionArgs(): { endpoint: string; fetch?: typeof fetch } {
   if (STATIC_BUILD && !process.env.NEXT_PUBLIC_RPC_URL) return { endpoint: RPC_LIST[0], fetch: fallbackFetch };
-  return { endpoint: resolveRpc(kind === "main" ? CONFIG.rpcUrl : CONFIG.fallbackRpcUrl) };
+  return { endpoint: resolveRpc(CONFIG.rpcUrl) };
 }
+
+/** "Tue, Oct 6 · 7:00 PM ET" */
+export function fmtOpens(ms: number): string {
+  const d = new Date(ms);
+  const day = d.toLocaleDateString("en-US", { timeZone: DISPLAY_TZ.timeZone, weekday: "short", month: "short", day: "numeric" });
+  const t = d.toLocaleTimeString("en-US", { timeZone: DISPLAY_TZ.timeZone, hour: "numeric", minute: "2-digit" });
+  return `${day} · ${t} ${DISPLAY_TZ.label}`;
+}
+/** "TUE" */
+export const weekdayShort = (ms: number) =>
+  new Date(ms).toLocaleDateString("en-US", { timeZone: DISPLAY_TZ.timeZone, weekday: "short" }).toUpperCase();
 
 /** "Oct 6, 2026, 7:00 PM ET" */
 export function fmtTime(ms: number): string {

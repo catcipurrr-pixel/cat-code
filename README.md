@@ -24,7 +24,6 @@ Everything lives in `src/config.ts`. Each value can be overridden with env vars 
 | var | purpose |
 |---|---|
 | `RPC_UPSTREAM_URL` (server) | RPC behind the built-in `/api/rpc/main` proxy. Use a paid RPC in production. The key stays on the server. |
-| `RPC_FALLBACK_UPSTREAM_URL` (server) | mainnet RPC used for the fee wallet's balance while the program isn't live |
 | `NEXT_PUBLIC_RPC_URL` | Lets the browser call an RPC directly instead of the proxy. The RPC must allow browser origins. |
 | `NEXT_PUBLIC_CLUSTER` | `mainnet-beta` / `devnet` / `localnet` (sets the explorer links) |
 | `NEXT_PUBLIC_PROGRAM_ID` | deployed program ID (defaults to the IDL address) |
@@ -35,7 +34,7 @@ The public `api.mainnet-beta.solana.com` endpoint returns 403 to browser origins
 
 ## Data flow
 * **Program live and initialized:** the site reads Config, the latest Round, and the Vault/HolderPool PDAs through the Anchor IDL. The vault panel shows the vault's spendable SOL. The countdown targets the round's `unlock_ts`.
-* **Not deployed yet (fallback):** the vault panel shows the fee wallet's SOL balance, and the countdown uses `NEXT_PUBLIC_FALLBACK_COUNTDOWN_TARGET`.
+* **Not deployed yet (fallback):** there is no vault yet, so the REWARD_VAULT panel shows no SOL figure, only an "OPENS TUE" headline with "Vault opens Tue, Oct 6 · 7:00 PM ET". The countdown uses `COUNTDOWN_TARGET`. Once the program is live, the panel reads the vault PDA.
 * **Playing:**
   1. Commit: the guess is checked locally against the public fingerprint, then `sha256(salt‖answer‖wallet‖nonce)` is sent. The nonce is stored in this browser's localStorage.
   2. Reveal: available once `min_reveal_delay_slots` have passed.
@@ -48,5 +47,5 @@ The cipher is **not** in the bundle. At unlock time, upload `round-<id>.json` (`
 
 ## Deploy (Vercel)
 1. Push this folder to a Git repo and import it in Vercel. Framework: Next.js. The default build command is `next build`.
-2. Set env vars: `RPC_UPSTREAM_URL` (Helius/Triton/QuickNode), `RPC_FALLBACK_UPSTREAM_URL`, `NEXT_PUBLIC_CLUSTER`, `NEXT_PUBLIC_PROGRAM_ID`, `NEXT_PUBLIC_FALLBACK_COUNTDOWN_TARGET`, and `NEXT_PUBLIC_SITE_URL`.
+2. Set env vars: `RPC_UPSTREAM_URL` (Helius/Triton/QuickNode), `NEXT_PUBLIC_CLUSTER`, `NEXT_PUBLIC_PROGRAM_ID`, `NEXT_PUBLIC_FALLBACK_COUNTDOWN_TARGET`, and `NEXT_PUBLIC_SITE_URL`.
 3. After each program change, run `npm run sync-idl` and commit `src/idl/*`. Vercel builds from the committed copy.

@@ -1,8 +1,7 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { useCallback, useEffect, useState } from "react";
 import { useConnection } from "@solana/wallet-adapter-react";
-import { CONFIG, connectionArgs } from "@/config";
+import { CONFIG } from "@/config";
 import {
   fetchConfig, fetchRound, getProgram, isProgramDeployed, pda, spendableSol,
   type ConfigView, type RoundView,
@@ -27,7 +26,6 @@ export interface GameState {
 
 export function useGameState(): GameState {
   const { connection } = useConnection();
-  const fallbackConn = useMemo(() => { const a = connectionArgs("fallback"); return new Connection(a.endpoint, { commitment: "confirmed", fetch: a.fetch }); }, []);
   const [s, setS] = useState<Omit<GameState, "refresh">>({
     mode: "loading", programDeployed: null, config: null, round: null, vaultSol: null,
     holderPoolSol: null, targetMs: CONFIG.fallbackCountdownTargetMs, error: null, lastUpdated: null,
@@ -58,11 +56,10 @@ export function useGameState(): GameState {
             return;
           }
         }
-        // Fallback: program not deployed / not initialized -> show fee wallet balance.
-        const lamports = await fallbackConn.getBalance(new PublicKey(CONFIG.feeWallet));
+        // Fallback: program not deployed / not initialized -> there is no vault yet, show no balance.
         if (!cancelled)
           setS({ mode: "fallback", programDeployed: deployed, config: null, round: null,
-            vaultSol: lamports / LAMPORTS_PER_SOL, holderPoolSol: null,
+            vaultSol: null, holderPoolSol: null,
             targetMs: CONFIG.fallbackCountdownTargetMs, error: null, lastUpdated: Date.now() });
         return;
       } catch (e) {
@@ -73,7 +70,7 @@ export function useGameState(): GameState {
     })();
     const id = setTimeout(() => setTick((t) => t + 1), CONFIG.pollMs);
     return () => { cancelled = true; clearTimeout(id); };
-  }, [connection, fallbackConn, tick]);
+  }, [connection, tick]);
 
   return { ...s, refresh };
 }

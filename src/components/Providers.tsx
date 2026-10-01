@@ -8,7 +8,7 @@ import { connectionArgs } from "@/config";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
 export default function Providers({ children }: { children: ReactNode }) {
-  const conn = useMemo(() => connectionArgs("main"), []);
+  const conn = useMemo(() => connectionArgs(), []);
   const wallets = useMemo(() => [new PhantomWalletAdapter(), new SolflareWalletAdapter()], []);
   return (
     <ConnectionProvider endpoint={conn.endpoint} config={{ commitment: "confirmed", fetch: conn.fetch }}>

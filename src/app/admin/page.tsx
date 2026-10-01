@@ -4,7 +4,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useGameState } from "@/lib/useGameState";
-import { CONFIG, connectionArgs, explorerUrl, fmtTime, STATIC_BUILD } from "@/config";
+import { CONFIG, connectionArgs, explorerUrl, fmtOpens, fmtTime, STATIC_BUILD } from "@/config";
 import { PROGRAM_ID, pda } from "@/lib/program";
 
 /**
@@ -37,7 +37,7 @@ export default function AdminPage() {
         <h2 className="panel-title">// SYSTEM</h2>
         <Row k="mode" v={game.mode === "onchain" ? "ON-CHAIN" : game.mode === "fallback" ? "FALLBACK (program not deployed/initialized)" : "LOADING…"} />
         <Row k="cluster" v={CONFIG.cluster} />
-        <Row k="rpc (browser)" v={STATIC_BUILD && !process.env.NEXT_PUBLIC_RPC_URL ? `${connectionArgs("main").endpoint} (+ public fallbacks)` : CONFIG.rpcUrl.startsWith("/") ? `${CONFIG.rpcUrl} (server proxy; upstream hidden)` : CONFIG.rpcUrl} />
+        <Row k="rpc (browser)" v={STATIC_BUILD && !process.env.NEXT_PUBLIC_RPC_URL ? `${connectionArgs().endpoint} (+ public fallbacks)` : CONFIG.rpcUrl.startsWith("/") ? `${CONFIG.rpcUrl} (server proxy; upstream hidden)` : CONFIG.rpcUrl} />
         <Row k="program_id" v={PROGRAM_ID.toBase58()} href={explorerUrl("address", PROGRAM_ID.toBase58())} />
         <Row k="program_deployed" v={game.programDeployed == null ? "…" : yes(game.programDeployed)} />
         <Row k="current_slot" v={slot ?? "—"} />
@@ -55,7 +55,7 @@ export default function AdminPage() {
               <Row k="pending_owner" v={c.pendingOwner ?? "none"} />
               <Row k="operator" v={c.operator ?? "—"} href={c.operator ? explorerUrl("address", c.operator) : undefined} />
               <Row k="paused" v={c.paused == null ? "n/a (no pause flag in this build)" : c.paused ? <span className="warn">TRUE</span> : "FALSE"} />
-              <Row k="fee_wallet" v={c.feeWallet ? <>{c.feeWallet}{c.feeWallet !== CONFIG.feeWallet && <span className="warn"> (≠ site config {CONFIG.feeWallet})</span>}</> : "—"} />
+              <Row k="config.fee_wallet" v={c.feeWallet ?? "—"} />
               <Row k="token_mint" v={<>{c.tokenMint}{c.tokenMint !== CONFIG.token.ca && <span className="warn"> (≠ site CA)</span>}</>} />
               <Row k="round_active" v={yes(c.roundActive)} />
               <Row k="round_count" v={c.roundCount} />
@@ -105,11 +105,10 @@ export default function AdminPage() {
 
       <section className="panel">
         <h2 className="panel-title">// BALANCES</h2>
-        <Row k={game.mode === "onchain" ? "vault (spendable)" : "fee wallet (fallback vault)"} v={game.vaultSol == null ? "—" : `${game.vaultSol.toFixed(4)} SOL`} />
+        <Row k="vault (spendable)" v={game.mode === "onchain" && game.vaultSol != null ? `${game.vaultSol.toFixed(4)} SOL` : `— (vault not live; opens ${fmtOpens(CONFIG.fallbackCountdownTargetMs)})`} />
         {game.mode === "onchain" && <Row k="holder_pool (spendable)" v={game.holderPoolSol == null ? "—" : `${game.holderPoolSol.toFixed(4)} SOL`} />}
         <Row k="vault_pda" v={pda.vault().toBase58()} />
         <Row k="holder_pool_pda" v={pda.holderPool().toBase58()} />
-        <Row k="fee_wallet" v={CONFIG.feeWallet} href={explorerUrl("address", CONFIG.feeWallet, "mainnet-beta")} />
         <p className="muted small">Read-only. This page never shows or handles answers, salts or keys. Admin actions belong in offline / multisig tooling.</p>
       </section>
       <Footer />

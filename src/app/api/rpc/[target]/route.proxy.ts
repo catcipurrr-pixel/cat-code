@@ -5,11 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
  * and so a paid RPC key (RPC_UPSTREAM_URL) stays server-side. Only the methods this site needs
  * are allowed. Upstreams:
  *   /api/rpc/main      -> RPC_UPSTREAM_URL           (program reads + transactions)
- *   /api/rpc/fallback  -> RPC_FALLBACK_UPSTREAM_URL  (fee-wallet balance, mainnet)
  */
 const UPSTREAMS: Record<string, string | undefined> = {
   main: process.env.RPC_UPSTREAM_URL || "https://api.mainnet-beta.solana.com",
-  fallback: process.env.RPC_FALLBACK_UPSTREAM_URL || process.env.RPC_UPSTREAM_URL || "https://api.mainnet-beta.solana.com",
 };
 const ALLOWED = new Set([
   "getAccountInfo", "getMultipleAccounts", "getBalance", "getSlot", "getBlockHeight", "getEpochInfo",
