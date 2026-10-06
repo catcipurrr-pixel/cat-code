@@ -9,7 +9,7 @@ import idl from "@/idl/cat_code.json";
  * (ISO 8601 with offset/Z, or unix seconds). Env NEXT_PUBLIC_FALLBACK_COUNTDOWN_TARGET overrides it.
  * Used until an on-chain round exists; afterwards the round's unlock_ts is used.
  * ==================================================================== */
-export const COUNTDOWN_TARGET = "2026-10-06T23:00:00Z"; // Tue Oct 6, 2026, 7:00 PM ET
+export const COUNTDOWN_TARGET = "2026-10-13T23:00:00Z"; // Tue Oct 13, 2026, 7:00 PM ET
 
 /** Time zone + label used when displaying times on the site. */
 export const DISPLAY_TZ = { timeZone: "America/Toronto", label: "ET" } as const;
@@ -110,7 +110,7 @@ export function connectionArgs(): { endpoint: string; fetch?: typeof fetch } {
   return { endpoint: resolveRpc(CONFIG.rpcUrl) };
 }
 
-/** "Tue, Oct 6 · 7:00 PM ET" */
+/** "Tue, Oct 13 · 7:00 PM ET" */
 export function fmtOpens(ms: number): string {
   const d = new Date(ms);
   const day = d.toLocaleDateString("en-US", { timeZone: DISPLAY_TZ.timeZone, weekday: "short", month: "short", day: "numeric" });
@@ -121,7 +121,7 @@ export function fmtOpens(ms: number): string {
 export const weekdayShort = (ms: number) =>
   new Date(ms).toLocaleDateString("en-US", { timeZone: DISPLAY_TZ.timeZone, weekday: "short" }).toUpperCase();
 
-/** "Oct 6, 2026, 7:00 PM ET" */
+/** "Oct 13, 2026, 7:00 PM ET" */
 export function fmtTime(ms: number): string {
   return `${new Date(ms).toLocaleString("en-US", { timeZone: DISPLAY_TZ.timeZone, month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })} ${DISPLAY_TZ.label}`;
 }

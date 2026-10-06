@@ -13,7 +13,7 @@ npm run screenshots  # Playwright + system Chrome -> screenshots/ (expects the a
 ```
 
 ## Countdown target
-Edit the single line `export const COUNTDOWN_TARGET = "..."` in `src/config.ts`. It's currently `2026-10-06T23:00:00Z`, which displays as "unlocks Oct 6, 2026, 7:00 PM ET". This target is used until an on-chain round exists. After that, the round's `unlock_ts` is used.
+Edit the single line `export const COUNTDOWN_TARGET = "..."` in `src/config.ts`. It's currently `2026-10-13T23:00:00Z`, which displays as "unlocks Oct 13, 2026, 7:00 PM ET". This target is used until an on-chain round exists. After that, the round's `unlock_ts` is used.
 
 ## GitHub Pages (static build)
 `npm run build:static` sets `STATIC_EXPORT=1` and runs `output: "export"` into `out/`, with basePath `/cat-code`. GitHub Pages can't run a server, so this build leaves out the `/api/rpc` proxy. Instead the browser calls CORS-friendly public RPCs directly, with failover (`PUBLIC_RPC_FALLBACKS` in `src/config.ts`, or override with `NEXT_PUBLIC_RPC_URLS`). Preview locally with `npm run preview:static`, which serves http://localhost:3200/cat-code/. `.github/workflows/pages.yml` builds and deploys on every push to `main`. Run `node scripts/verify-live.mjs <url> [shot.png]` to smoke-test a deployment.
@@ -34,7 +34,7 @@ The public `api.mainnet-beta.solana.com` endpoint returns 403 to browser origins
 
 ## Data flow
 * **Program live and initialized:** the site reads Config, the latest Round, and the Vault/HolderPool PDAs through the Anchor IDL. The vault panel shows the vault's spendable SOL. The countdown targets the round's `unlock_ts`.
-* **Not deployed yet (fallback):** there is no vault yet, so the REWARD_VAULT panel shows no SOL figure, only an "OPENS TUE" headline with "Vault opens Tue, Oct 6 · 7:00 PM ET". The countdown uses `COUNTDOWN_TARGET`. Once the program is live, the panel reads the vault PDA.
+* **Not deployed yet (fallback):** there is no vault yet, so the REWARD_VAULT panel shows no SOL figure, only an "OPENS TUE" headline with "Vault opens Tue, Oct 13 · 7:00 PM ET". The countdown uses `COUNTDOWN_TARGET`. Once the program is live, the panel reads the vault PDA.
 * **Playing:**
   1. Commit: the guess is checked locally against the public fingerprint, then `sha256(salt‖answer‖wallet‖nonce)` is sent. The nonce is stored in this browser's localStorage.
   2. Reveal: available once `min_reveal_delay_slots` have passed.
